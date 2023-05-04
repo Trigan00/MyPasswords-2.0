@@ -1,0 +1,6 @@
+@media (max-width: 900px) {
+  .PasswordsPageWrapper {
+    flex-direction: column-reverse;
+    align-items: center;
+  }
+}
