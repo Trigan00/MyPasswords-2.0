@@ -2,12 +2,12 @@ import { Box, AppBar, Toolbar, Container, Tooltip } from '@mui/material';
 import shortenText from '../helpers/shortenText';
 import { useAuth } from '../hooks/useAuth';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import { useDispatch } from 'react-redux';
-import { logout } from '../store/slices/user/userSlice';
+import { logout } from '../store/slices/user/user.action';
+import { useTypedDispatch } from '../store/hooks/useTypedDispatch';
 
 const NavBar: React.FC = () => {
   const { email } = useAuth();
-  const dispatch = useDispatch();
+  const dispatch = useTypedDispatch();
 
   const signOutHandler = () => {
     dispatch(logout());

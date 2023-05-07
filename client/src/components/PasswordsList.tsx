@@ -20,6 +20,7 @@ const PasswordsList: React.FC = () => {
 
   if (isLoading) return <Loader />;
   if (!data) return <h1>{getErrorData(error, 'message')}</h1>;
+  // if (!data) return <h1>{error as string}</h1>;
 
   return (
     <Box>

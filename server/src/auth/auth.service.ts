@@ -4,23 +4,26 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+// import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
 import { v4 } from 'uuid';
+import * as CryptoJS from 'crypto-js';
 import { UsersService } from 'src/users/users.service';
-import { User } from 'src/users/users.model';
+// import { User } from 'src/users/users.model';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { MailService } from 'src/mail/mail.service';
+import { TokenService } from 'src/token/token.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
-    private jwtService: JwtService,
+    // private jwtService: JwtService,
     private mailService: MailService,
+    private tokenService: TokenService,
   ) {}
 
   async login(userDto: LoginUserDto) {
@@ -59,18 +62,27 @@ export class AuthService {
       user.password,
     );
 
-    if (user && passwordEquals) {
-      const secretKey = await bcrypt.hash(userDto.password, 6);
-      return {
+    if (!user || !passwordEquals) {
+      throw new UnauthorizedException({
+        message: 'Некорректный email или пароль',
+      });
+    }
+    const secretKey = CryptoJS.SHA256(userDto.password);
+    const tokens = this.tokenService.generateTokens({
+      email: user.dataValues.email,
+      id: user.dataValues.id,
+    });
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+    return {
+      refreshToken: tokens.refreshToken,
+      user: {
         email: user.email,
         id: user.id,
-        token: this.generateToken(user),
-        secretKey,
-      };
-    }
-    throw new UnauthorizedException({
-      message: 'Некорректный email или пароль',
-    });
+        // token: this.generateToken(user),
+        token: tokens.accessToken,
+        secretKey: String(secretKey),
+      },
+    };
   }
 
   async registration(userDto: RegisterUserDto) {
@@ -101,7 +113,11 @@ export class AuthService {
       activationLink,
       secret2fa: secret2fa.base32,
     });
-    return { QRCodeUrl, message: 'Пользователь добавлен. Поддтвердите email!' };
+
+    return {
+      QRCodeUrl,
+      message: 'Пользователь добавлен. Поддтвердите email!',
+    };
   }
 
   async activation(res, link: string) {
@@ -115,8 +131,43 @@ export class AuthService {
     return res.redirect(process.env.CLIENT_URL);
   }
 
-  generateToken(user: User) {
-    const payload = { email: user.email, id: user.id };
-    return this.jwtService.sign(payload);
+  async logout(refreshToken: string) {
+    const token = await this.tokenService.removeToken(refreshToken);
+    return token;
   }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException();
+    }
+    const userData = this.tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await this.tokenService.findToken(refreshToken);
+    if (!userData || !tokenFromDb) {
+      throw new UnauthorizedException();
+    }
+
+    // console.log(userData);
+    const user = await this.userService.getUserByEmail(
+      userData.email || userData.dataValues.email,
+    );
+    const tokens = this.tokenService.generateTokens({
+      email: user.email,
+      id: user.id,
+    });
+
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+    return {
+      refreshToken: tokens.refreshToken,
+      user: {
+        email: user.email,
+        id: user.id,
+        token: tokens.accessToken,
+      },
+    };
+  }
+
+  // generateToken(user: User) {
+  //   const payload = { email: user.email, id: user.id };
+  //   return this.jwtService.sign(payload);
+  // }
 }

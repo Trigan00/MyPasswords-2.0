@@ -1,5 +1,13 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import {
+  Column,
+  DataType,
+  HasMany,
+  HasOne,
+  Model,
+  Table,
+} from 'sequelize-typescript';
 import { Password } from 'src/passwords/passwords.model';
+import { Token } from 'src/token/token.model';
 
 interface UserCreationAttrs {
   email: string;
@@ -35,4 +43,7 @@ export class User extends Model<User, UserCreationAttrs> {
 
   @HasMany(() => Password)
   passwords: Password[];
+
+  @HasOne(() => Token)
+  token: Token;
 }

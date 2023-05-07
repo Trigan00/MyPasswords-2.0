@@ -61,6 +61,7 @@ const PasswordInfo: React.FC<PasswordInfoProps> = ({
 
   useEffect(() => {
     if (error || updateError) {
+      console.log(error);
       showAlert('error', getErrorData(error || updateError, 'message'));
     }
   }, [error, showAlert, updateError]);

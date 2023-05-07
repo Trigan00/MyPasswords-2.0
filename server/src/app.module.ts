@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { PasswordsModule } from './passwords/passwords.module';
 import { Password } from './passwords/passwords.model';
 import { MailModule } from './mail/mail.module';
+import { TokenModule } from './token/token.module';
+import { Token } from './token/token.model';
 
 @Module({
   imports: [
@@ -25,12 +27,13 @@ import { MailModule } from './mail/mail.module';
       define: {
         timestamps: false,
       },
-      models: [User, Password],
+      models: [User, Password, Token],
     }),
     UsersModule,
     AuthModule,
     PasswordsModule,
     MailModule,
+    TokenModule,
   ],
   controllers: [],
   providers: [],
