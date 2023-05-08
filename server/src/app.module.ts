@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { UsersModule } from './users/users.module';
 import { User } from './users/users.model';
 import { AuthModule } from './auth/auth.module';
 import { PasswordsModule } from './passwords/passwords.module';
@@ -9,6 +10,7 @@ import { Password } from './passwords/passwords.model';
 import { MailModule } from './mail/mail.module';
 import { TokenModule } from './token/token.module';
 import { Token } from './token/token.model';
+import { join } from 'path';
 
 @Module({
   imports: [
@@ -28,6 +30,9 @@ import { Token } from './token/token.model';
         timestamps: false,
       },
       models: [User, Password, Token],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', '..', 'client', 'build'),
     }),
     UsersModule,
     AuthModule,

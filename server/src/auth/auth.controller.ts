@@ -31,7 +31,7 @@ export class AuthController {
   ) {
     const userData = await this.authService.login(userDto);
     res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 60 * 60 * 1000, //1 hour
+      maxAge: 24 * 60 * 60 * 1000, //1 day
       httpOnly: true,
     });
     return userData.user;
@@ -76,7 +76,7 @@ export class AuthController {
     const { refreshToken } = req.cookies;
     const userData = await this.authService.refresh(refreshToken);
     res.cookie('refreshToken', userData.refreshToken, {
-      maxAge: 60 * 60 * 1000,
+      maxAge: 24 * 60 * 60 * 1000,
       httpOnly: true,
     });
     return userData.user;
