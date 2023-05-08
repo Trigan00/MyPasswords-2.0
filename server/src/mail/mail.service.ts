@@ -18,7 +18,7 @@ export class MailService {
   }
 
   async sendVerificationMail(to: string, link: string, QRCodeUrl: string) {
-    console.log(QRCodeUrl);
+    // console.log(QRCodeUrl);
     try {
       await this.transporter.sendMail({
         from: 'MyPasswords <mytest_90@mail.ru>',

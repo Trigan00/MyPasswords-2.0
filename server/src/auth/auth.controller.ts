@@ -59,8 +59,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('logout')
   logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
-    console.log('logout');
-    console.log(req.cookies);
+    // console.log('logout');
+    // console.log(req.cookies);
     const { refreshToken } = req.cookies;
     res.clearCookie('refreshToken');
     return this.authService.logout(refreshToken);
