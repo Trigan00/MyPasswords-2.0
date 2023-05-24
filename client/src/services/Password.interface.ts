@@ -7,12 +7,14 @@ export interface IEncryptedPassword {
 export interface IDecryptedPassword extends IEncryptedPassword {
   login: string;
   password: string;
+  url: string;
 }
 
 export interface AddPasswordDto {
   title: string;
   password: string;
   login: string;
+  url: string;
 }
 
 export interface UpdatePasswordDto extends AddPasswordDto {

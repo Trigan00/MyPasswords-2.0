@@ -35,6 +35,9 @@ export class Password extends Model<Password, PasswordCreationAttrs> {
   @Column({ type: DataType.STRING, allowNull: false })
   password: string;
 
+  @Column({ type: DataType.STRING })
+  url: string;
+
   @Column({ type: DataType.STRING, allowNull: false })
   iv: string;
 

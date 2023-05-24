@@ -10,4 +10,6 @@ export class AddPasswordDto {
   @IsNotEmpty({ message: 'не должно быть пустым' })
   @IsString({ message: 'Должно быть строкой' })
   readonly login: string;
+
+  readonly url: string;
 }

@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { AddPasswordDto } from '../services/Password.interface';
-import { Box, Button, TextField } from '@mui/material';
+import {
+  Box,
+  Button,
+  FormControlLabel,
+  Switch,
+  TextField,
+} from '@mui/material';
 import {
   getErrorData,
   useAddPasswordMutation,
@@ -18,7 +24,9 @@ const AddPassword: React.FC = () => {
     title: '',
     login: '',
     password: '',
+    url: '',
   });
+  const [isWebSite, setIsWebSite] = useState(false);
 
   const createHandler = async () => {
     const res = await createPassword(form);
@@ -26,6 +34,7 @@ const AddPassword: React.FC = () => {
       title: '',
       login: '',
       password: '',
+      url: '',
     });
     if ('data' in res) showAlert('success', res.data.message);
   };
@@ -100,6 +109,27 @@ const AddPassword: React.FC = () => {
           onClick={generatePasswordHandler}
         />
       </Box>
+
+      <FormControlLabel
+        control={
+          <Switch
+            checked={isWebSite}
+            onChange={() => setIsWebSite((prev) => !prev)}
+          />
+        }
+        label='Is website'
+      />
+      <TextField
+        variant='outlined'
+        fullWidth
+        name='url'
+        size='small'
+        label='URL'
+        margin='normal'
+        disabled={!isWebSite}
+        value={form.url}
+        onChange={changeHandler}
+      />
 
       {!isLoading ? (
         <Button

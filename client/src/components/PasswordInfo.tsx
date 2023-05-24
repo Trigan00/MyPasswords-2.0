@@ -16,8 +16,10 @@ import {
 } from '../services/PasswordService';
 import Loader from '../UI/Loader';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import LaunchIcon from '@mui/icons-material/Launch';
 import copy from 'copy-to-clipboard';
 import useAlert from '../hooks/useAlert';
+import { Link } from 'react-router-dom';
 
 interface PasswordInfoProps {
   id: number;
@@ -53,6 +55,7 @@ const PasswordInfo: React.FC<PasswordInfoProps> = ({
     title: '',
     login: '',
     password: '',
+    url: '',
   });
 
   useEffect(() => {
@@ -86,7 +89,7 @@ const PasswordInfo: React.FC<PasswordInfoProps> = ({
     message: string,
   ) => {
     copy(form[type]);
-    showAlert('info', message, 1500);
+    showAlert('info', message, 1200);
   };
 
   return (
@@ -149,6 +152,25 @@ const PasswordInfo: React.FC<PasswordInfoProps> = ({
                   onClick={() => copyHandler('login', 'Логин скопирован')}
                 />
               </Box>
+              {form.url && (
+                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                  <TextField
+                    margin='normal'
+                    size='small'
+                    label='URL'
+                    variant='filled'
+                    name='url'
+                    fullWidth
+                    value={form.url}
+                    onChange={changeHandler}
+                  />
+                  <Link to={form.url} target='_blank' rel='noopener noreferrer'>
+                    <LaunchIcon
+                      sx={{ ml: 2, color: 'grey', cursor: 'pointer' }}
+                    />
+                  </Link>
+                </Box>
+              )}
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <TextField
                   margin='normal'
@@ -167,6 +189,7 @@ const PasswordInfo: React.FC<PasswordInfoProps> = ({
                   onClick={() => copyHandler('password', 'Пароль скопирован')}
                 />
               </Box>
+
               <Box
                 fontSize={14}
                 color={'#1976d2'}

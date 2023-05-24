@@ -148,7 +148,7 @@ const RegisterPage: React.FC = () => {
         </Grid>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-        <img src={qr} alt='qr' />
+        {qr && <img src={qr} alt='qr' />}
       </Box>
       <Copyright sx={{ mt: 8, mb: 4 }} />
     </Container>

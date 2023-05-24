@@ -77,6 +77,7 @@ export class PasswordsService {
       id: password.id,
       title: password.title,
       login: password.login,
+      url: password.url,
       password: decryptedPassword,
       passwordStrength: password.password[0],
     };
@@ -106,6 +107,7 @@ export class PasswordsService {
         login: passwordDto.login,
         title: passwordDto.title,
         password: pwStrength + encryptedPassword.password,
+        url: passwordDto.url,
         iv: encryptedPassword.iv,
       },
       { where: { id: passwordDto.id } },
