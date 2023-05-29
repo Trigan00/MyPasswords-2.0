@@ -5,7 +5,7 @@ export class LoginUserDto {
   @IsEmail({}, { message: 'Некорректный email' })
   readonly email: string;
 
-  @Length(6, 16, { message: 'Не меньше 6 и не больше 16' })
+  @Length(12, 30, { message: 'Не меньше 12 и не больше 30' })
   readonly password: string;
 
   readonly code: string;

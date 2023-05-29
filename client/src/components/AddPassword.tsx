@@ -14,7 +14,7 @@ import {
 } from '../services/PasswordService';
 import Loader from '../UI/Loader';
 import useAlert from '../hooks/useAlert';
-import CreateIcon from '@mui/icons-material/Create';
+import AutoFixHighIcon from '@mui/icons-material/AutoFixHigh';
 
 const AddPassword: React.FC = () => {
   const [createPassword, { isLoading, error }] = useAddPasswordMutation();
@@ -104,7 +104,7 @@ const AddPassword: React.FC = () => {
           value={form.password}
           onChange={changeHandler}
         />
-        <CreateIcon
+        <AutoFixHighIcon
           sx={{ ml: 1, cursor: 'pointer', color: 'grey' }}
           onClick={generatePasswordHandler}
         />

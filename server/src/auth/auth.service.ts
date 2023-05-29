@@ -4,24 +4,22 @@ import {
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-// import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
 import * as speakeasy from 'speakeasy';
 import * as QRCode from 'qrcode';
 import { v4 } from 'uuid';
 import * as CryptoJS from 'crypto-js';
 import { UsersService } from 'src/users/users.service';
-// import { User } from 'src/users/users.model';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { MailService } from 'src/mail/mail.service';
 import { TokenService } from 'src/token/token.service';
+import encryption from 'src/helpers/encryption';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UsersService,
-    // private jwtService: JwtService,
     private mailService: MailService,
     private tokenService: TokenService,
   ) {}
@@ -38,7 +36,7 @@ export class AuthService {
       throw new HttpException('Аккаунт не активирован', HttpStatus.BAD_REQUEST);
 
     const twoFAtoken = speakeasy.totp({
-      secret: user.secret2fa,
+      secret: encryption.decrypt(user.secret2fa, process.env.twoFASecret),
       encoding: 'base32',
     });
 
@@ -47,7 +45,7 @@ export class AuthService {
     }
 
     const tokenValidates = speakeasy.totp.verify({
-      secret: user.secret2fa,
+      secret: encryption.decrypt(user.secret2fa, process.env.twoFASecret),
       encoding: 'base32',
       token: userDto.code,
       window: 6,
@@ -78,7 +76,6 @@ export class AuthService {
       user: {
         email: user.email,
         id: user.id,
-        // token: this.generateToken(user),
         token: tokens.accessToken,
         secretKey: String(secretKey),
       },
@@ -111,7 +108,7 @@ export class AuthService {
       email: userDto.email,
       password: hashPassword,
       activationLink,
-      secret2fa: secret2fa.base32,
+      secret2fa: encryption.encrypt(secret2fa.base32, process.env.twoFASecret),
     });
 
     return {
@@ -132,6 +129,7 @@ export class AuthService {
   }
 
   async logout(refreshToken: string) {
+    if (!refreshToken) return;
     const token = await this.tokenService.removeToken(refreshToken);
     return token;
   }
@@ -146,7 +144,6 @@ export class AuthService {
       throw new UnauthorizedException();
     }
 
-    // console.log(userData);
     const user = await this.userService.getUserByEmail(
       userData.email || userData.dataValues.email,
     );
@@ -165,9 +162,4 @@ export class AuthService {
       },
     };
   }
-
-  // generateToken(user: User) {
-  //   const payload = { email: user.email, id: user.id };
-  //   return this.jwtService.sign(payload);
-  // }
 }

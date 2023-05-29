@@ -6,7 +6,6 @@ import { AddPasswordDto } from './dto/add-password.dto';
 import passwordStrengthOptions from '../helpers/passwordStrengthOptions';
 import encryption from 'src/helpers/encryption';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-// import passwordGenerator from 'src/helpers/passwordGenerator';
 import * as generator from 'generate-password';
 
 @Injectable()
@@ -39,8 +38,7 @@ export class PasswordsService {
     await this.PasswordRepo.create({
       ...passwordDto,
       userId,
-      password: pwStrength + encryptedPassword.password,
-      iv: encryptedPassword.iv,
+      password: pwStrength + encryptedPassword,
     });
 
     return { message: 'Пароль добавлен' };
@@ -66,10 +64,7 @@ export class PasswordsService {
       where: { id },
     });
     const decryptedPassword = encryption.decrypt(
-      {
-        password: password.password.substring(1),
-        iv: password.iv,
-      },
+      password.password.substring(1),
       secretKey,
     );
 
@@ -106,9 +101,8 @@ export class PasswordsService {
       {
         login: passwordDto.login,
         title: passwordDto.title,
-        password: pwStrength + encryptedPassword.password,
+        password: pwStrength + encryptedPassword,
         url: passwordDto.url,
-        iv: encryptedPassword.iv,
       },
       { where: { id: passwordDto.id } },
     );

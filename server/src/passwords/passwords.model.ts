@@ -13,7 +13,6 @@ interface PasswordCreationAttrs {
   password: string;
   login: string;
   userId: string;
-  iv: string;
 }
 
 @Table({ tableName: 'passwords' })
@@ -37,9 +36,6 @@ export class Password extends Model<Password, PasswordCreationAttrs> {
 
   @Column({ type: DataType.STRING })
   url: string;
-
-  @Column({ type: DataType.STRING, allowNull: false })
-  iv: string;
 
   @ForeignKey(() => User)
   @Column({ type: DataType.INTEGER })
